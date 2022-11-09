@@ -5,10 +5,15 @@ import numpy as np
 class Classifier(object):
     def __init__(
             self,
-            _model_path='model/classifier/classifier.tflite',
+            _model_path=r'C:\python projects\model\classifier\classifier.tflite',
             _num_threads=1):
+        # ładowanie modelu tflite
         self.interpreter=tf.lite.Interpreter(model_path=_model_path, num_threads=_num_threads)
+        print(self.interpreter)
+        # alokacja tensorów
         self.interpreter.allocate_tensors()
+
+        # tensory warstwy wejściowej i wyjściowej
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
 

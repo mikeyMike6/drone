@@ -32,7 +32,7 @@ drone_in_gesture_control = True
 video = cv2.VideoWriter('video.avi', cv2.VideoWriter_fourcc(*'XVID'), 30, (width, height))
 
 
-def dron_control(_key,  _gesture_id):
+def dron_control(_gesture_id):
     gesture_control.gesture_control(_gesture_id)
 
 
@@ -50,25 +50,16 @@ while True:
     key = cv2.waitKey(1) & 0xff
     if key == 27:  # ESC
         break
-    img = frame_read.frame
-    img, gesture_id, finger_points = gesture_recognizer.recognize_and_draw(img)
-    gesture_buffer.add_gesture(gesture_id)
-    gesture_id = gesture_buffer.get_gesture()
-    if gesture_id == 0:
-        print(finger_points)
-        if finger_points < 0.3:
-            gesture_id = 11
-        elif finger_points > 0.6:
-            gesture_id = 12
-        else:
-            gesture_id = 6
-        img = gesture_recognizer.draw_following_info(img)
-    img = gesture_recognizer.draw_gesture_info(img, gesture_id)
-    img = cv2.putText(img, str(battery_status), (700, 700),
+    _img = frame_read.frame
+    _img, _id = gesture_recognizer.recognize_and_draw(_img)
+    gesture_buffer.add_gesture(_id)
+    _id = gesture_buffer.get_gesture()
+    _img = gesture_recognizer.draw_gesture_info(_img, _id)
+    _img = cv2.putText(_img, str(battery_status), (700, 700),
                       cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 1, cv2.LINE_AA)
-    threading.Thread(target=dron_control, args=(key, gesture_id,)).start()
-    video.write(img)
-    cv2.imshow("drone", img)
+    threading.Thread(target=dron_control, args=(_id,)).start()
+    video.write(_img)
+    cv2.imshow("drone", _img)
 
 tello.land()
 video.release()
